@@ -1,0 +1,29 @@
+#!/bin/bash
+
+cat << EOF > /etc/nginx/nginx.conf
+user nginx;
+worker_processes auto;
+pid /run/nginx.pid;
+
+events {
+    worker_connections 768;
+}
+
+http {
+    server {
+        listen *:8080;
+        server_name _;
+        
+        location / {
+            root /usr/share/nginx/html;
+            index index.html index.htm;
+        }
+    }
+}
+EOF
+
+# Ensure nginx is running as the nginx user
+sed -i 's/^user .*;/user nginx;/' /etc/nginx/nginx.conf
+
+# Restart nginx
+nginx -s reload
